@@ -1,35 +1,39 @@
+using DesafioLynx.Api.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Adiciona suporte a controllers.
-// Decisão: usar controllers em vez de Minimal APIs para facilitar
-// organização, leitura e explicação em um desafio técnico.
+// Configuração da API
 builder.Services.AddControllers();
-
-// Swagger / OpenAPI com UI.
-// Decisão: habilitar Swagger UI para facilitar testes manuais,
-// demonstração da API e leitura pelo avaliador.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Dependency Injection - Data Access
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddSingleton<IDbConnectionFactory>(sp => new SqliteConnectionFactory(connectionString!));
+builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<OrderRepository>();
+builder.Services.AddScoped<PaymentRepository>();
+
 var app = builder.Build();
 
-// Pipeline HTTP
+// Inicializa banco de dados automaticamente em desenvolvimento
 if (app.Environment.IsDevelopment())
 {
-    // Swagger habilitado apenas em ambiente de desenvolvimento.
+    var connectionString = app.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrEmpty(connectionString))
+    {
+        DatabaseConfig.InitializeDatabase(connectionString, app.Logger);
+    }
+}
+
+// Pipeline de middleware
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Decisão: não forçar HTTPS neste desafio local.
-// Evita configuração desnecessária de certificados e ruído técnico.
-// app.UseHttpsRedirection();
-
-// Autorização mantida no pipeline por padrão.
-// Mesmo sem autenticação agora, deixa o fluxo pronto para evolução.
 app.UseAuthorization();
-
-// Mapeia controllers (endpoints REST).
 app.MapControllers();
 
 app.Run();
