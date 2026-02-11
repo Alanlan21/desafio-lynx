@@ -11,10 +11,16 @@ namespace DesafioLynx.Api.Data
 
             logger.LogInformation("Database path: {DbPath}", dbPath);
 
+            if (File.Exists(dbPath) && DatabaseHasValidData(connectionString, logger))
+            {
+                logger.LogInformation("Database already exists with valid data. Skipping initialization.");
+                return;
+            }
+
+            // Se arquivo existe mas não tem dados válidos, vamos recriar as tabelas
             if (File.Exists(dbPath))
             {
-                logger.LogInformation("Database already exists. Skipping initialization.");
-                return;
+                logger.LogInformation("Database file exists but has no valid data. Recreating tables.");
             }
 
             logger.LogInformation("Creating database and executing setup script.");
@@ -27,29 +33,63 @@ namespace DesafioLynx.Api.Data
             logger.LogInformation("Database initialized successfully.");
         }
 
+        private static bool DatabaseHasValidData(string connectionString, ILogger logger)
+        {
+            try
+            {
+                using var connection = new SqliteConnection(connectionString);
+                connection.Open();
+                
+                // Verifica se existe pelo menos um produto
+                using var command = new SqliteCommand("SELECT COUNT(*) FROM products", connection);
+                var count = command.ExecuteScalar();
+                
+                var hasData = Convert.ToInt32(count) > 0;
+                logger.LogInformation("Database has {Count} products.", count);
+                
+                return hasData;
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning("Error checking database data: {Error}. Will recreate database.", ex.Message);
+                return false;
+            }
+        }
+
         private static void ExecuteSqlScript(SqliteConnection connection, ILogger logger)
         {
-            var scriptPath = Path.Combine(AppContext.BaseDirectory, "database-setup.sql");
+            // Script está na raiz do workspace - vai um nível acima do projeto DesafioLynx.Api
+            var currentDir = Directory.GetCurrentDirectory();
+            var scriptPath = Path.Combine(currentDir, "..", "database-setup.sql");
+            var resolvedPath = Path.GetFullPath(scriptPath);
 
-            if (!File.Exists(scriptPath))
-                throw new FileNotFoundException($"Setup script not found at: {scriptPath}");
+            if (!File.Exists(resolvedPath))
+                throw new FileNotFoundException($"Setup script not found at: {resolvedPath}");
 
-            var sqlScript = File.ReadAllText(scriptPath);
+            var sqlScript = File.ReadAllText(resolvedPath);
 
-            // Observação: split simplificado suficiente para este desafio
-            var statements = sqlScript
-                .Split(';', StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => s.Trim())
-                .Where(s => !string.IsNullOrWhiteSpace(s) && !s.StartsWith("--"))
-                .ToList();
-
-            foreach (var statement in statements)
+            // Remove comment lines but execute the script as a whole
+            var lines = sqlScript.Split('\n', StringSplitOptions.None);
+            var cleanedLines = new List<string>();
+            
+            foreach (var line in lines)
             {
-                using var command = new SqliteCommand(statement, connection);
-                command.ExecuteNonQuery();
+                var cleanLine = line.Trim();
+                
+                // Skip pure comment lines (but keep SQL with inline comments for now)
+                if (string.IsNullOrWhiteSpace(cleanLine) || (cleanLine.StartsWith("--") && !cleanLine.Contains("INSERT") && !cleanLine.Contains("CREATE")))
+                    continue;
+                    
+                cleanedLines.Add(line); // Keep original line to preserve SQL structure
             }
+            
+            // Execute the entire script as one batch - SQLite supports this
+            var cleanedScript = string.Join("\n", cleanedLines);
 
-            logger.LogInformation("Executed {Count} SQL statements.", statements.Count);
+            using var command = new SqliteCommand(cleanedScript, connection);
+            command.ExecuteNonQuery();
+
+            logger.LogInformation("SQL script executed successfully.");
         }
     }
 }

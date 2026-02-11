@@ -1,4 +1,5 @@
 using DesafioLynx.Api.Data;
+using DesafioLynx.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,15 +15,20 @@ builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<PaymentRepository>();
 
+// Dependency Injection - Business Logic
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<PaymentService>();
+
 var app = builder.Build();
 
 // Inicializa banco de dados automaticamente em desenvolvimento
 if (app.Environment.IsDevelopment())
 {
-    var connectionString = app.Configuration.GetConnectionString("DefaultConnection");
-    if (!string.IsNullOrEmpty(connectionString))
+    var dbConnectionString = app.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrEmpty(dbConnectionString))
     {
-        DatabaseConfig.InitializeDatabase(connectionString, app.Logger);
+        DatabaseConfig.InitializeDatabase(dbConnectionString, app.Logger);
     }
 }
 
