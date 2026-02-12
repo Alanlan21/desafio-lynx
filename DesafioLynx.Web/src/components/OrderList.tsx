@@ -78,7 +78,6 @@ const OrderList: React.FC<OrderListProps> = ({
         <p>
           <span className="font-medium">Cliente:</span> {order.customerName}
         </p>
-        <p className="text-xs text-gray-500">{order.customerEmail}</p>
         <p>
           <span className="font-medium">Data:</span>{" "}
           {formatDate(order.createdAt)}

@@ -158,9 +158,42 @@ VALUES (
         'Instrumentos',
         3900,
         TRUE
+    ),
+    (
+        'Bateria Completa DW Drums ',
+        'Instrumentos',
+        8960,
+        TRUE
+    ),
+    (
+        'Piano Digital Roland FP-30X',
+        'Instrumentos',
+        45900,
+        FALSE
     );
+-- Produto descontinuado
 
-( 'Bateria Completa DW Drums ', 'Instrumentos', 8960, TRUE );
+-- Produtos inativos adicionais para testes
+INSERT INTO
+    products (
+        name,
+        category,
+        price_cents,
+        active
+    )
+VALUES (
+        'Smartphone Samsung Galaxy S20',
+        'Eletrônicos',
+        89990,
+        FALSE
+    ), -- Produto descontinuado
+    (
+        'Refactoring - Martin Fowler',
+        'Livros',
+        11500,
+        FALSE
+    );
+-- Produto fora de estoque
 
 -- Pedido de exemplo 1 - Status NEW (aguardando pagamento)
 INSERT INTO
