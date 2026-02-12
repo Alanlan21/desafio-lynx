@@ -22,13 +22,14 @@ namespace DesafioLynx.Api.Data
                     o.id,
                     o.customer_id as CustomerId,
                     c.name as CustomerName,
+                    c.email as CustomerEmail,
                     o.status,
                     o.created_at as CreatedAt,
                     COALESCE(SUM(oi.quantity * oi.unit_price_cents), 0) as TotalCents
                 FROM orders o
                 INNER JOIN customers c ON o.customer_id = c.id
                 LEFT JOIN order_items oi ON o.id = oi.order_id
-                GROUP BY o.id, o.customer_id, c.name, o.status, o.created_at
+                GROUP BY o.id, o.customer_id, c.name, c.email, o.status, o.created_at
                 ORDER BY o.created_at DESC";
 
             return await connection.QueryAsync<OrderSummaryResponse>(sql);
@@ -44,6 +45,7 @@ namespace DesafioLynx.Api.Data
                     o.id,
                     o.customer_id as CustomerId,
                     c.name as CustomerName,
+                    c.email as CustomerEmail,
                     o.status,
                     o.created_at as CreatedAt,
                     COALESCE(SUM(oi.quantity * oi.unit_price_cents), 0) as TotalCents
@@ -51,7 +53,7 @@ namespace DesafioLynx.Api.Data
                 INNER JOIN customers c ON o.customer_id = c.id
                 LEFT JOIN order_items oi ON o.id = oi.order_id
                 WHERE o.id = @Id
-                GROUP BY o.id, o.customer_id, c.name, o.status, o.created_at";
+                GROUP BY o.id, o.customer_id, c.name, c.email, o.status, o.created_at";
 
             var order = await connection.QuerySingleOrDefaultAsync<OrderDetailResponse>(orderSql, new { Id = id });
 

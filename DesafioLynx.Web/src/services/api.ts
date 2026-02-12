@@ -18,6 +18,7 @@ export interface OrderSummary {
   id: number;
   customerId: number;
   customerName: string;
+  customerEmail: string;
   status: string;
   createdAt: string;
   totalCents: number;

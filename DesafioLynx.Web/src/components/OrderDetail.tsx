@@ -93,6 +93,7 @@ const OrderDetailComponent: React.FC<OrderDetailProps> = ({
           <span className="font-medium text-gray-700">Cliente:</span>{" "}
           {order.customerName}
         </p>
+        <p className="text-xs text-gray-500 pl-16">{order.customerEmail}</p>
         <p>
           <span className="font-medium text-gray-700">Data:</span>{" "}
           {formatDate(order.createdAt)}
