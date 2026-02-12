@@ -55,9 +55,11 @@ const OrderList: React.FC<OrderListProps> = ({
   }
 
   // Separar pedidos por status
-  const newOrders = orders.filter(order => order.status === 'NEW');
-  const paidOrders = orders.filter(order => order.status === 'PAID');
-  const otherOrders = orders.filter(order => order.status !== 'NEW' && order.status !== 'PAID');
+  const newOrders = orders.filter((order) => order.status === "NEW");
+  const paidOrders = orders.filter((order) => order.status === "PAID");
+  const otherOrders = orders.filter(
+    (order) => order.status !== "NEW" && order.status !== "PAID",
+  );
 
   const renderOrderCard = (order: OrderSummary) => (
     <div
@@ -95,16 +97,12 @@ const OrderList: React.FC<OrderListProps> = ({
     <div className="space-y-4">
       {/* Pedidos Novos */}
       {newOrders.length > 0 && (
-        <div className="space-y-3">
-          {newOrders.map(renderOrderCard)}
-        </div>
+        <div className="space-y-3">{newOrders.map(renderOrderCard)}</div>
       )}
 
       {/* Outros Status (Cancelados, etc.) */}
       {otherOrders.length > 0 && (
-        <div className="space-y-3">
-          {otherOrders.map(renderOrderCard)}
-        </div>
+        <div className="space-y-3">{otherOrders.map(renderOrderCard)}</div>
       )}
 
       {/* Separador visual e Pedidos Pagos */}
@@ -113,13 +111,13 @@ const OrderList: React.FC<OrderListProps> = ({
           {(newOrders.length > 0 || otherOrders.length > 0) && (
             <div className="flex items-center my-4">
               <div className="flex-1 h-px bg-gray-300"></div>
-              <div className="px-4 text-sm text-gray-500 font-medium">Pedidos Pagos</div>
+              <div className="px-4 text-sm text-gray-500 font-medium">
+                Pedidos Pagos
+              </div>
               <div className="flex-1 h-px bg-gray-300"></div>
             </div>
           )}
-          <div className="space-y-3">
-            {paidOrders.map(renderOrderCard)}
-          </div>
+          <div className="space-y-3">{paidOrders.map(renderOrderCard)}</div>
         </>
       )}
     </div>

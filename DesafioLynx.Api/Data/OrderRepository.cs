@@ -73,6 +73,24 @@ namespace DesafioLynx.Api.Data
             var items = await connection.QueryAsync<OrderItemResponse>(itemsSql, new { OrderId = id });
             order.Items = items.ToList();
 
+            // Finally, get the payments
+            var paymentsSql = @"
+                SELECT 
+                    p.id,
+                    p.method,
+                    p.amount_cents as AmountCents,
+                    p.paid_at as PaidAt
+                FROM payments p
+                WHERE p.order_id = @OrderId
+                ORDER BY p.id";
+
+            var payments = await connection.QueryAsync<PaymentResponse>(paymentsSql, new { OrderId = id });
+            order.Payments = payments.ToList();
+
+            // Calculate paid and remaining amounts
+            order.PaidCents = order.Payments.Sum(p => p.AmountCents);
+            order.RemainingCents = order.TotalCents - order.PaidCents;
+
             return order;
         }
 
