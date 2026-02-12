@@ -137,20 +137,17 @@ A interface estará disponível em `http://localhost:5173`
 ## 📸 Screenshots
 
 ### Tela de Produtos
-
-> ![Tela de Produtos](./docs/screenshots/produtos.png)
+![Tela de Produtos](https://github.com/user-attachments/assets/cb531341-7fe9-471e-8c74-fc6c9f29306c)
 
 ### Tela de Pedidos
-
-> ![Tela de Pedidos](./docs/screenshots/pedidos.png)
+![Tela de Pedidos](https://github.com/user-attachments/assets/caf25455-0705-43ad-ab3c-556aa5800dd5)
 
 ### Criação de Pedido
-
-> ![Criar Pedido](./docs/screenshots/criar-pedido.png)
+![Criar Pedido](https://github.com/user-attachments/assets/c8d3d8d0-1d19-4d38-a9fc-cca475972cdc)
 
 ### Documentação Swagger
+![Swagger](https://github.com/user-attachments/assets/1d8e3687-5ae6-44b7-ae99-4b1770caec91)
 
-> ![Swagger](./docs/screenshots/swagger.png)
 
 ## 🧪 Testando a API
 
