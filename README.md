@@ -45,7 +45,7 @@ Sistema para gerenciamento de produtos, pedidos e pagamentos com as seguintes fu
 │   │   └── types/            # TypeScript types
 ├── database-setup.sql        # Script de inicialização do banco
 ├── DECISIONS.md              # Decisões arquiteturais detalhadas
-└── DEMO_FLUXO_BACKEND.md     # Demonstração do fluxo de dados
+
 ```
 
 ## 🏗️ Arquitetura
